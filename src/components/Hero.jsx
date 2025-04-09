@@ -6,7 +6,7 @@ export default function Hero() {
     <div className='min-h-screen h-full w-full bg-black text-white'>
       {/* Navbar */}
       <header className='flex items-center justify-between px-6 py-4'>
-        <h1 className='text-xl font-semibold text-blue-200'>SentiVoice</h1>
+        <h1 className='text-xl font-semibold text-blue-200'>SENTI-VOICE</h1>
         <nav className='space-x-6 hidden md:flex'>
           <a href='#' className='hover:text-gray-300'>
             Home
