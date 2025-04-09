@@ -6,22 +6,19 @@ export default function Hero() {
     <div className='min-h-screen h-full w-full bg-black text-white'>
       {/* Navbar */}
       <header className='flex items-center justify-between px-6 py-4'>
-        <h1 className='text-xl font-semibold text-blue-200'>Serendale</h1>
+        <h1 className='text-xl font-semibold text-blue-200'>SentiVoice</h1>
         <nav className='space-x-6 hidden md:flex'>
           <a href='#' className='hover:text-gray-300'>
-            Smart Contracts
+            Home
           </a>
           <a href='#' className='hover:text-gray-300'>
-            Services
+            About
           </a>
           <a href='#' className='hover:text-gray-300'>
-            Solutions
+            Future
           </a>
           <a href='#' className='hover:text-gray-300'>
             Roadmap
-          </a>
-          <a href='#' className='hover:text-gray-300'>
-            Whitepaper
           </a>
         </nav>
         <div className='flex space-x-4'>
