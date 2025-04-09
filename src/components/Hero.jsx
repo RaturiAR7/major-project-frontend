@@ -1,4 +1,5 @@
 import React from "react";
+import { waveImage } from "../assets/constants";
 
 export default function Hero() {
   return (
@@ -55,7 +56,7 @@ export default function Hero() {
         <div className='absolute bottom-0 left-0 w-full h-screen'>
           {" "}
           <img
-            src='./wave.png' // Replace with actual path to the wave image
+            src={waveImage} // Replace with actual path to the wave image
             alt='Gradient Wave'
             className=' w-full h-full'
           />
