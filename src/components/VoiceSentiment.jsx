@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 
 const VoiceSentiment = () => {
   const [audioURL, setAudioURL] = useState(null);
   const [recording, setRecording] = useState(false);
   const [sentiment, setSentiment] = useState(null);
+  const inputRef = useRef(null);
 
   let mediaRecorder;
   let audioChunks = [];
@@ -24,18 +25,7 @@ const VoiceSentiment = () => {
       const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
       const url = URL.createObjectURL(audioBlob);
       setAudioURL(url);
-
-      // Simulate sentiment
-      const sentiments = [
-        "😊 Happy",
-        "😔 Sad",
-        "😐 Neutral",
-        "😠 Angry",
-        "🤩 Excited",
-      ];
-      const randomSentiment =
-        sentiments[Math.floor(Math.random() * sentiments.length)];
-      setSentiment(randomSentiment);
+      detectSentiment(); //Simulate
     };
 
     setTimeout(() => {
@@ -44,6 +34,27 @@ const VoiceSentiment = () => {
     }, 5000);
   };
 
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    setAudioURL(url);
+    detectSentiment(); // simulate
+  };
+
+  const detectSentiment = () => {
+    // Simulate sentiment
+    const sentiments = [
+      "😊 Happy",
+      "😔 Sad",
+      "😐 Neutral",
+      "😠 Angry",
+      "🤩 Excited",
+    ];
+    const randomSentiment =
+      sentiments[Math.floor(Math.random() * sentiments.length)];
+    setSentiment(randomSentiment);
+  };
   return (
     <div className='min-h-screen bg-black text-white flex flex-col items-center justify-center px-4 relative overflow-hidden'>
       {/* Gradient Heading */}
@@ -60,7 +71,7 @@ const VoiceSentiment = () => {
       </p>
 
       {/* Record Button */}
-      <div>
+      <div className='flex gap-5'>
         <button
           onClick={startRecording}
           disabled={recording}
@@ -72,6 +83,21 @@ const VoiceSentiment = () => {
         >
           {recording ? "Recording..." : "Start Voice Recording 🎙️"}
         </button>
+        {/* Upload Button */}
+        <button
+          onClick={() => inputRef.current.click()}
+          className='transition-all duration-300 ease-in-out px-8 py-4 text-lg font-semibold rounded-lg shadow-lg bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-cyan-500 text-white animate-pulse'
+        >
+          Upload Audio File 📁
+        </button>
+        {/* Hidden File Input */}
+        <input
+          ref={inputRef}
+          type='file'
+          accept='audio/*'
+          onChange={handleFileUpload}
+          className='hidden'
+        />
       </div>
 
       {/* Audio + Result */}
