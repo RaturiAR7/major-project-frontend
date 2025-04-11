@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 
-const VoiceSentiment = () => {
+const ParkisonDetect = () => {
   const [audioURL, setAudioURL] = useState(null);
   const [recording, setRecording] = useState(false);
   const [sentiment, setSentiment] = useState(null);
@@ -45,11 +45,9 @@ const VoiceSentiment = () => {
   const detectSentiment = () => {
     // Simulate sentiment
     const sentiments = [
-      "😊 Happy",
-      "😔 Sad",
-      "😐 Neutral",
-      "😠 Angry",
-      "🤩 Excited",
+      "😊 No Parkinson's",
+      "😔 Parkinson's Detected",
+      "😐 Uncertain",
     ];
     const randomSentiment =
       sentiments[Math.floor(Math.random() * sentiments.length)];
@@ -60,14 +58,14 @@ const VoiceSentiment = () => {
       {/* Gradient Heading */}
       <h1 className='text-5xl md:text-6xl font-extrabold text-center leading-tight mb-4'>
         <span className='bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-transparent bg-clip-text'>
-          Voice Emotion Analyzer
+          Parkinson Disease Analyzer
         </span>
       </h1>
 
       {/* Description */}
       <p className='text-gray-300 text-lg md:text-xl text-center max-w-2xl mb-10'>
-        Let our AI decode your emotions from your voice. Tap the button and
-        speak naturally — we’ll analyze the sentiment behind your tone.
+        Let our AI decode features from your voice. Tap the button and speak
+        naturally — we’ll analyze the sentiment behind your tone.
       </p>
 
       {/* Record Button */}
@@ -111,7 +109,7 @@ const VoiceSentiment = () => {
           {sentiment && (
             <div className='text-center'>
               <p className='text-2xl font-semibold text-white'>
-                Detected Sentiment:
+                Detected Parkinson:
               </p>
               <p className='text-4xl font-bold bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 text-transparent bg-clip-text mt-2'>
                 {sentiment}
@@ -124,4 +122,4 @@ const VoiceSentiment = () => {
   );
 };
 
-export default VoiceSentiment;
+export default ParkisonDetect;
