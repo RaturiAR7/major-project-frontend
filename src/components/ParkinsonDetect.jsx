@@ -1,61 +1,41 @@
-import React, { useRef, useState } from "react";
+import { useState } from "react";
 
 const ParkisonDetect = () => {
-  const [audioURL, setAudioURL] = useState(null);
-  const [recording, setRecording] = useState(false);
+  const [text, setText] = useState("");
+  const [loading, setLoading] = useState(false);
   const [sentiment, setSentiment] = useState(null);
-  const inputRef = useRef(null);
 
-  let mediaRecorder;
-  let audioChunks = [];
+  const handleSubmit = async () => {
+    if (!text.trim()) return;
+    setLoading(true);
+    setSentiment(null);
 
-  const startRecording = async () => {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    mediaRecorder = new MediaRecorder(stream);
-    audioChunks = [];
+    try {
+      const res = await fetch("http://127.0.0.1:5000/predict", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ features: text }),
+      });
 
-    mediaRecorder.start();
-    setRecording(true);
-
-    mediaRecorder.ondataavailable = (e) => {
-      audioChunks.push(e.data);
-    };
-
-    mediaRecorder.onstop = () => {
-      const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
-      const url = URL.createObjectURL(audioBlob);
-      setAudioURL(url);
-      detectSentiment(); //Simulate
-    };
-
-    setTimeout(() => {
-      mediaRecorder.stop();
-      setRecording(false);
-    }, 5000);
+      const data = await res.json();
+      setSentiment(
+        (data.prediction == 0
+          ? "No Parkinson Detected"
+          : "Parkinson Detected") || "No response"
+      );
+    } catch (error) {
+      console.error("Error:", error);
+      setSentiment("Error occurred");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleFileUpload = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const url = URL.createObjectURL(file);
-    setAudioURL(url);
-    detectSentiment(); // simulate
-  };
-
-  const detectSentiment = () => {
-    // Simulate sentiment
-    const sentiments = [
-      "😊 No Parkinson's",
-      "😔 Parkinson's Detected",
-      "😐 Uncertain",
-    ];
-    const randomSentiment =
-      sentiments[Math.floor(Math.random() * sentiments.length)];
-    setSentiment(randomSentiment);
-  };
   return (
     <div className='min-h-screen bg-black text-white flex flex-col items-center justify-center px-4 relative overflow-hidden'>
-      {/* Gradient Heading */}
+      {/* Heading */}
       <h1 className='text-5xl md:text-6xl font-extrabold text-center leading-tight mb-4'>
         <span className='bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-transparent bg-clip-text'>
           Parkinson Disease Analyzer
@@ -64,58 +44,41 @@ const ParkisonDetect = () => {
 
       {/* Description */}
       <p className='text-gray-300 text-lg md:text-xl text-center max-w-2xl mb-10'>
-        Let our AI decode features from your voice. Tap the button and speak
-        naturally — we’ll analyze the sentiment behind your tone.
+        Enter your speech parameter transcript — our AI will analyze the text
+        and detect signs of Parkinson’s.
       </p>
 
-      {/* Record Button */}
-      <div className='flex gap-5'>
-        <button
-          onClick={startRecording}
-          disabled={recording}
-          className={`transition-all duration-300 ease-in-out px-8 py-4 text-lg font-semibold rounded-lg shadow-lg ${
-            recording
-              ? "bg-gray-700 text-gray-300 cursor-not-allowed"
-              : "bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-pink-500 text-white"
-          } animate-pulse`}
-        >
-          {recording ? "Recording..." : "Start Voice Recording 🎙️"}
-        </button>
-        {/* Upload Button */}
-        <button
-          onClick={() => inputRef.current.click()}
-          className='transition-all duration-300 ease-in-out px-8 py-4 text-lg font-semibold rounded-lg shadow-lg bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-cyan-500 text-white animate-pulse'
-        >
-          Upload Audio File 📁
-        </button>
-        {/* Hidden File Input */}
-        <input
-          ref={inputRef}
-          type='file'
-          accept='audio/*'
-          onChange={handleFileUpload}
-          className='hidden'
-        />
-      </div>
+      {/* Text Input */}
+      <textarea
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        rows={6}
+        placeholder='Type or paste the spoken transcript here...'
+        className='w-full max-w-xl p-4 text-lg rounded-lg bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 mb-6'
+      />
 
-      {/* Audio + Result */}
-      {audioURL && (
-        <div className='mt-12 w-full max-w-lg bg-gradient-to-br from-purple-900/30 to-blue-900/10 border border-purple-600/30 rounded-2xl p-6 shadow-xl backdrop-blur-sm'>
+      {/* Submit Button */}
+      <button
+        onClick={handleSubmit}
+        disabled={loading}
+        className={`transition-all duration-300 ease-in-out px-8 py-4 text-lg font-semibold rounded-lg shadow-lg ${
+          loading
+            ? "bg-gray-700 text-gray-300 cursor-not-allowed"
+            : "bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-pink-500 text-white"
+        }`}
+      >
+        {loading ? "Analyzing..." : "Analyze Text 🧠"}
+      </button>
+
+      {/* Result */}
+      {sentiment && (
+        <div className='mt-10 w-full max-w-lg bg-gradient-to-br from-purple-900/30 to-blue-900/10 border border-purple-600/30 rounded-2xl p-6 shadow-xl backdrop-blur-sm'>
           <h3 className='text-xl font-bold text-pink-400 mb-4 text-center'>
-            🎧 Your Audio Playback
+            🧾 AI Prediction Result
           </h3>
-          <audio controls src={audioURL} className='w-full mb-4' />
-
-          {sentiment && (
-            <div className='text-center'>
-              <p className='text-2xl font-semibold text-white'>
-                Detected Parkinson:
-              </p>
-              <p className='text-4xl font-bold bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 text-transparent bg-clip-text mt-2'>
-                {sentiment}
-              </p>
-            </div>
-          )}
+          <p className='text-4xl font-bold text-center bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 text-transparent bg-clip-text'>
+            {sentiment}
+          </p>
         </div>
       )}
     </div>
